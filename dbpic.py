@@ -51,7 +51,6 @@ class DoubanPic(QMainWindow):
             self.ui.lineEdit.setText("")
             self.ui.lineEdit.setFocus()
             return
-        self.ui.statusbar.showMessage(u"开始分析相册信息...")
         logging.info("Ready to analysis album info")
         self.photourls=self.db.getPhotoLinks(self.dLink)
         if self.db.photoCount>=100:
@@ -81,13 +80,13 @@ class DoubanPic(QMainWindow):
             m=MutiDl(self)
             tasks.append(m)
         for task in tasks:
+            time.sleep(0.5)
             task.start()
         logging.info("Muti DL started.")
         while self.isAlive(tasks):
             time.sleep(0.5)
             self.ui.progressBar.setValue(d)
         self.ui.progressBar.setValue(len(self.finalLinks))
-        time.sleep(5)
         f=open("FailedFiles.txt","wa")
         for filename in failed:
             f.write("%s,"%filename)
@@ -134,12 +133,12 @@ class MutiDl(threading.Thread):
             urllib.urlretrieve(url,filename)
         except IOError,e:
             if hasattr(e,"reason"):
-                logging.error(":While getting %s,URLError:%s"%(filename,e.reason))
+                logging.error(":[%s]While getting %s,URLError:%s"%(self.getName(), filename,e.reason))
             elif hasattr(e,"code"):
-                logging.error(":While getting %s,HttpError:%s"%(filename,e.code))
+                logging.error(":[%s]While getting %s,HttpError:%s"%(self.getName(),filename,e.code))
             else:
-                logging.error(":While getting %s,Error:%s"%(filename,e))
-            time.sleep(5)
+                logging.error(":[%s]While getting %s,Error:%s"%(self.getName(),filename,e))
+            time.sleep(1)
             thread.start_new_thread(self.dl,(url,filename))
             if kv[filename]>=4:
                 global failed
@@ -147,6 +146,7 @@ class MutiDl(threading.Thread):
                 if filename not in failed:
                     failed.append(filename)
                 self.lock.release()
+                logging.error("%s failed."%filename)
                 return
             kv[filename]+=1
         else:
