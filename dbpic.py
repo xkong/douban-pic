@@ -1,10 +1,10 @@
 # coding:utf-8
 
 import sys
-import urllib
 import threading
 import time
 import thread
+import urllib
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -38,43 +38,43 @@ class DoubanPic(QMainWindow):
 
     def getPic(self):
         global lst
-        lst=[]
-        self.photourls=[]
-        self.db=Douban(self)
+        lst = []
+        self.photourls = []
+        self.db = Douban(self)
         self.ui.progressBar.setValue(0)
-        self.orgLink=unicode(self.ui.lineEdit.text())
-        self.dLink=self.db.tidyLink(self.orgLink.strip())
-        if not self.dLink :
+        self.orgLink = unicode(self.ui.lineEdit.text())
+        self.dLink = self.db.tidyLink(self.orgLink.strip())
+        if not self.dLink:
             self.ui.lineEdit.setText("")
             self.ui.lineEdit.setFocus()
             return
         logging.info("Ready to analysis album info")
-        self.photourls=self.db.getPhotoLinks(self.dLink)
-        if self.db.photoCount>=100:
+        self.photourls = self.db.getPhotoLinks(self.dLink)
+        if self.db.photoCount >= 100:
             self.check()
             for i in self.checkedPages:
-                self.finalLinks.extend(self.photourls[i*100:(i+1)*100-1])
+                self.finalLinks.extend(self.photourls[i * 100: (i + 1) * 100 - 1])
         else:
-            self.finalLinks=self.photourls
+            self.finalLinks = self.photourls
         if not self.finalLinks:
             self.ui.statusbar.showMessage(u"没有选择要下载的图片...")
             self.ui.lineEdit.setFocus()
             return
-        self.ui.progressBar.setRange(0,len(self.finalLinks))
-        lst=self.finalLinks
+        self.ui.progressBar.setRange(0, len(self.finalLinks))
+        lst = self.finalLinks
         for filename in lst:
-            fname=filename.split("/")[-1]
-            fname="photos/%s"%(fname)
-            kv[fname]=0
-        tasks=[]
+            fname = filename.split("/")[-1]
+            fname = "photos/%s" % (fname)
+            kv[fname] = 0
+        tasks = []
         self.ui.statusbar.showMessage(u"开始下载图片...")
         logging.info("Ready to get pics")
-        if QThread.idealThreadCount()>=10:
-            threadCount=QThread.idealThreadCount()
+        if QThread.idealThreadCount() >= 10:
+            threadCount = QThread.idealThreadCount()
         else:
-            threadCount=10
+            threadCount = 10
         for i in range(threadCount):
-            m=MutiDl(self)
+            m = MutiDl(self)
             tasks.append(m)
         for task in tasks:
             time.sleep(0.5)
@@ -84,9 +84,9 @@ class DoubanPic(QMainWindow):
             time.sleep(0.5)
             self.ui.progressBar.setValue(d)
         self.ui.progressBar.setValue(len(self.finalLinks))
-        f=open("FailedFiles.txt","a")
+        f = open("FailedFiles.txt", "a")
         for filename in failed:
-            f.write("%s,"%filename)
+            f.write("%s," % filename)
         f.write("\n")
         f.close()
         self.db.alert(u"所有图片下载完成！")
@@ -99,71 +99,78 @@ class DoubanPic(QMainWindow):
 
     def check(self):
         if not self.photourls:
-            QMessageBox.warning(self,u"提示",u"您还没有获取下载地址……")
+            QMessageBox.warning(self, u"提示", u"您还没有获取下载地址……")
             return
-        d=Check(len(self.photourls),self)
+        d = Check(len(self.photourls), self)
         if d.exec_():
-            self.checkedPages=d.checkedPages
-    def isAlive(self,tasks):
+            self.checkedPages = d.checkedPages
+
+    def isAlive(self, tasks):
         for task in tasks:
             if task.isAlive():
                 return True
         return False
 
+
 class MutiDl(threading.Thread):
-    def __init__(self,parent):
+
+    def __init__(self, parent):
         threading.Thread.__init__(self)
-        self.parent=parent
-        self.photoDir="photos"
-        self.lock=threading.RLock()
+        self.parent = parent
+        self.photoDir = "photos"
+        self.lock = threading.RLock()
 
     def __del__(self):
         global d
-        d=0
-    def dl(self,url,filename):
+        d = 0
+
+    def dl(self, url, filename):
         global d
         global recursion
         global kv
-        if kv[filename]!=0:
-            logging.info("This is the %s time of DL image %s"%(kv[filename],filename))
+        if kv[filename] != 0:
+            logging.info("This is the %s time of DL image %s" % (kv[filename], filename))
         try:
-            urllib.urlretrieve(url,filename)
-        except IOError,e:
-            if hasattr(e,"reason"):
-                logging.error(":[%s]While getting %s,URLError:%s"%(self.getName(), filename,e.reason))
-            elif hasattr(e,"code"):
-                logging.error(":[%s]While getting %s,HttpError:%s"%(self.getName(),filename,e.code))
+            urllib.urlretrieve(url, filename)
+        except IOError, e:
+            if hasattr(e, "reason"):
+                logging.error(":[%s]While getting %s,URLError:%s" % (self.getName(), filename, e.reason))
+            elif hasattr(e, "code"):
+                logging.error(":[%s]While getting %s,HttpError:%s" % (self.getName(), filename, e.code))
             else:
-                logging.error(":[%s]While getting %s,Error:%s"%(self.getName(),filename,e))
+                logging.error(":[%s]While getting %s,Error:%s" % (self.getName(), filename, e))
             time.sleep(1)
-            thread.start_new_thread(self.dl,(url,filename))
-            if kv[filename]>=4:
+            thread.start_new_thread(self.dl, (url, filename))
+            if kv[filename] >= 4:
                 global failed
                 self.lock.acquire()
                 if filename not in failed:
                     failed.append(filename)
                 self.lock.release()
-                logging.error("%s failed."%filename)
+                logging.error("%s failed." % filename)
                 return
-            kv[filename]+=1
+            kv[filename] += 1
         else:
-            if kv[filename]!=0:
-                logging.info("IMAGE %s DL ok!"%filename)
-            d+=1
+            if kv[filename] != 0:
+                logging.info("IMAGE %s DL ok!" % filename)
+            d += 1
+
     def run(self):
         while True:
             global lst
             try:
                 self.lock.acquire()
-                url=lst.pop()
+                url = lst.pop()
                 self.lock.release()
-                filename=url.split("/")[-1]
+                filename = url.split("/")[-1]
             except IndexError:
                 break
             else:
-                self.dl(url,"%s/%s"%(self.photoDir,filename))
-if __name__=="__main__":
-    app=QApplication(sys.argv)
-    db=DoubanPic()
+                self.dl(url, "%s/%s" % (self.photoDir, filename))
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    db = DoubanPic()
     db.show()
     sys.exit(app.exec_())
