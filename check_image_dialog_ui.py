@@ -7,24 +7,21 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PySide import QtCore, QtGui
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
 
 class Ui_dialog(object):
+
     def setupUi(self, dialog):
-        dialog.setObjectName(_fromUtf8("dialog"))
+        dialog.setObjectName(u"dialog")
         dialog.resize(433, 394)
         dialog.setMaximumSize(QtCore.QSize(433, 394))
         dialog.setWindowTitle(QtGui.QApplication.translate("dialog", "选择要下载的页", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonBox = QtGui.QDialogButtonBox(dialog)
         self.buttonBox.setGeometry(QtCore.QRect(70, 20, 341, 91))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(u"buttonBox")
         self.tableWidget = QtGui.QTableWidget(dialog)
         self.tableWidget.setGeometry(QtCore.QRect(40, 50, 161, 301))
         self.tableWidget.setObjectName(_fromUtf8("tableWidget"))

@@ -10,7 +10,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from dbpic_ui import Ui_MainWindow
-from checkdlg import Check
+from check_image_dialog import Check
 from backend import Douban, logging
 
 # globals
