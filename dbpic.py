@@ -1,43 +1,40 @@
-#coding:utf-8
+# coding:utf-8
 
 import sys
-import urllib,urllib2
-import re
+import urllib
 import threading
-import sip
 import time
 import thread
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 from dbpic_ui import Ui_MainWindow
 from checkdlg import Check
+from backend import Douban, logging
 
-from backend import Douban,logging
-
-#globals
-lst=[]
-d=0
-recursion=0
-failed=[]
-kv={}
-
+# globals
+lst = []
+d = 0
+recursion = 0
+failed = []
+kv = {}
 
 
 class DoubanPic(QMainWindow):
-    def __init__(self,parent=None):
-        super(DoubanPic,self).__init__(parent)
-        self.ui=Ui_MainWindow()
+
+    def __init__(self, parent=None):
+        super(DoubanPic, self).__init__(parent)
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.progressBar.setValue(0)
 
-        self.photourls=[]
-        self.checkedPages=[]
-        self.finalLinks=[]
+        self.photourls = []
+        self.checkedPages = []
+        self.finalLinks = []
 
-        self.connect(self.ui.pushButton,SIGNAL("clicked()"),self.getPic)
-        self.connect(self.ui.lineEdit,SIGNAL("returnPressed()"),self.getPic)
-
+        self.connect(self.ui.pushButton, SIGNAL("clicked()"), self.getPic)
+        self.connect(self.ui.lineEdit, SIGNAL("returnPressed()"), self.getPic)
 
     def getPic(self):
         global lst
@@ -87,7 +84,7 @@ class DoubanPic(QMainWindow):
             time.sleep(0.5)
             self.ui.progressBar.setValue(d)
         self.ui.progressBar.setValue(len(self.finalLinks))
-        f=open("FailedFiles.txt","wa")
+        f=open("FailedFiles.txt","a")
         for filename in failed:
             f.write("%s,"%filename)
         f.write("\n")
