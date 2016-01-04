@@ -42,10 +42,9 @@ class DoubanPic(QtGui.QMainWindow):
             return
         self.msg(u"开始获取图片地址")
         photo_links = self.douban.get_photo_links(album_link)
-        with open("a.txt", "w") as f:
-            for i in photo_links:
-                f.write(i)
-                f.write("\n")
+        self.msg(u"生成txt下载文件")
+        filename = self.douban.generate_txt(photo_links)
+        self.msg(u"下载文件已生成，{}.txt 和 {}_large.txt".format(filename, filename))
 
     def init(self):
         self.ui.ipt_address.setText("")

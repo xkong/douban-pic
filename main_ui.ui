@@ -24,7 +24,7 @@
     <normaloff>:/icon/icon.png</normaloff>:/icon/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -84,20 +84,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>下载进度：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QProgressBar" name="progress_bar">
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>
