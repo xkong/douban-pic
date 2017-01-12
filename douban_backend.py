@@ -6,18 +6,19 @@
 #
 import logging
 import re
-import requests
 import threading
 import time
 import urlparse
+
+import requests
 
 
 LOG_FILE = 'dbpic.log'
 PATTERN_BACK_TO_ALBUM = ur'href="(.*?)">返回相册'
 PATTERN_PHOTO_COUNT = ur"共(\d+)张"
-PATTERN_PHOTO_URL = ur'<img src="(http://img\d\.douban[a-z]*\.com/view/photo/thumb/public/p\d+.jpg)"'
-PATTERN_ONLINE = r'http://www.douban.com/online/(\d+)/'
-PATTERN_ONLINE_ALBUM = ur'href="(http://www.douban.com/online/\d+/album/\d+/)" id="pho-num">全部\d+张'
+PATTERN_PHOTO_URL = ur'<img src="(https://img\d\.douban[a-z]*\.com/view/photo/thumb/public/p\d+.jpg)"'
+PATTERN_ONLINE = r'https://www.douban.com/online/(\d+)/'
+PATTERN_ONLINE_ALBUM = ur'href="(https://www.douban.com/online/\d+/album/\d+/)" id="pho-num">全部\d+张'
 
 ERROR_NOT_A_VALID_ALBUM = u"不是一个有效的豆瓣相册地址"
 ERROR_NOT_A_VALID_PIC = u"不是一个有效的图片地址"
@@ -36,6 +37,7 @@ def initlog():
     logger.addHandler(hdlr)
     logger.setLevel(logging.NOTSET)
     return logger
+
 
 logging_entry = initlog()
 logging_entry.info("Start..")

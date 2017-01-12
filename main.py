@@ -3,8 +3,8 @@ import sys
 
 from PySide import QtGui
 
-from main_ui import Ui_MainWindow
 from douban_backend import BaseDoubanBackend, logging_entry
+from main_ui import Ui_MainWindow
 
 
 class DoubanBackend(BaseDoubanBackend):
